@@ -6,5 +6,4 @@ import "fmt"
 func TestGin() {
 	fmt.Println("fdfd")
 
-
 }
