@@ -1,15 +1,16 @@
 package main
 
 import (
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/huangxinchun/hxcgo/admin/app"
 	"github.com/huangxinchun/hxcgo/admin/core"
 	"github.com/huangxinchun/hxcgo/admin/core/cache"
 	"github.com/huangxinchun/hxcgo/admin/core/opt"
 	"github.com/huangxinchun/hxcgo/admin/core/redis"
 	"github.com/huangxinchun/hxcgo/admin/core/rpc"
-	"log"
-	"net/http"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"

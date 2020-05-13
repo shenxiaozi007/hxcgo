@@ -44,3 +44,7 @@ type RPCConfig struct {
 	ServiceName string `json:"service_name"`
 	Addr        string `json:"addr"`
 }
+
+type Test struct {
+	Test1 string `json:"test1"`
+}

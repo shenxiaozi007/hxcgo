@@ -1,15 +1,17 @@
 package opt
 
 import (
-	"github.com/huangxinchun/hxcgo/admin/core"
 	"encoding/json"
 	"io/ioutil"
+
+	"github.com/huangxinchun/hxcgo/admin/core"
 )
 
 var config = &core.Config{}
 
 //ParseConfig
 func ParseConfig(filename string) error {
+
 	buf, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return err
