@@ -1,6 +1,6 @@
 package pkg
 
-import "admin/app/service/adminservice"
+import "github.com/huangxinchun/hxcgo/admin/app/service/adminservice"
 
 var privilegeService = adminservice.NewPrivilege()
 var roleService = adminservice.NewRole()

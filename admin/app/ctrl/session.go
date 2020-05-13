@@ -1,18 +1,18 @@
 package ctrl
 
 import (
-	"admin/app/pkg"
-	"admin/app/service"
-	"admin/app/service/adminservice"
-	"admin/core/encrypt"
-	"admin/core/ip"
+	"github.com/huangxinchun/hxcgo/admin/app/pkg"
+	"github.com/huangxinchun/hxcgo/admin/app/service"
+	"github.com/huangxinchun/hxcgo/admin/app/service/adminservice"
+	"github.com/huangxinchun/hxcgo/admin/core/encrypt"
+	"github.com/huangxinchun/hxcgo/admin/core/ip"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"time"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 
 	"github.com/dchest/captcha"
 	"github.com/gin-contrib/sessions"

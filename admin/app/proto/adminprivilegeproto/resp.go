@@ -1,7 +1,7 @@
 package adminprivilegeproto
 
 import (
-	"admin/core/rpc"
+	"github.com/huangxinchun/hxcgo/admin/core/rpc"
 	"time"
 )
 

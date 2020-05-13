@@ -1,8 +1,8 @@
 package adminservice
 
 import (
-	e "admin/app/err"
-	"admin/app/proto/adminroleproto"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/adminroleproto"
 )
 
 type Role struct {

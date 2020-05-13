@@ -1,9 +1,9 @@
 package ctrl
 
 import (
-	"admin/app/service"
-	"admin/core/opt"
-	"admin/core/uuid"
+	"github.com/huangxinchun/hxcgo/admin/app/service"
+	"github.com/huangxinchun/hxcgo/admin/core/opt"
+	"github.com/huangxinchun/hxcgo/admin/core/uuid"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -18,7 +18,7 @@ import (
 
 	"github.com/disintegration/imaging"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 
 	"github.com/gin-gonic/gin"
 )

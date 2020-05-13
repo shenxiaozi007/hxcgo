@@ -1,14 +1,14 @@
 package adminservice
 
 import (
-	"admin/app/proto/adminproto"
-	"admin/app/service"
-	"admin/core/encrypt"
-	"admin/core/reg"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/adminproto"
+	"github.com/huangxinchun/hxcgo/admin/app/service"
+	"github.com/huangxinchun/hxcgo/admin/core/encrypt"
+	"github.com/huangxinchun/hxcgo/admin/core/reg"
 	"log"
 	"time"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 )
 
 type Admin struct {

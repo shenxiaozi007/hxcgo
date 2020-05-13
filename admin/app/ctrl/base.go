@@ -1,14 +1,14 @@
 package ctrl
 
 import (
-	"admin/app/pkg"
-	"admin/conf"
-	"admin/conf/language"
+	"github.com/huangxinchun/hxcgo/admin/app/pkg"
+	"github.com/huangxinchun/hxcgo/admin/conf"
+	"github.com/huangxinchun/hxcgo/admin/conf/language"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 )
 
 type ImageSize struct {

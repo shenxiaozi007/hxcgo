@@ -1,16 +1,16 @@
 package adminctrl
 
 import (
-	"admin/app/ctrl"
-	"admin/app/pkg"
-	"admin/app/proto/adminroleproto"
-	"admin/app/service"
-	"admin/app/service/adminservice"
+	"github.com/huangxinchun/hxcgo/admin/app/ctrl"
+	"github.com/huangxinchun/hxcgo/admin/app/pkg"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/adminroleproto"
+	"github.com/huangxinchun/hxcgo/admin/app/service"
+	"github.com/huangxinchun/hxcgo/admin/app/service/adminservice"
 	"encoding/json"
 	"fmt"
 	"strconv"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 
 	"github.com/gin-gonic/gin"
 )

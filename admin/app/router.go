@@ -1,9 +1,9 @@
 package app
 
 import (
-	"admin/app/ctrl"
-	"admin/app/ctrl/adminctrl"
-	"admin/app/middleware"
+	"github.com/huangxinchun/hxcgo/admin/app/ctrl"
+	"github.com/huangxinchun/hxcgo/admin/app/ctrl/adminctrl"
+	"github.com/huangxinchun/hxcgo/admin/app/middleware"
 	"github.com/gin-gonic/gin"
 )
 

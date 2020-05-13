@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"admin/app/pkg"
+	"github.com/huangxinchun/hxcgo/admin/app/pkg"
 	"net/http"
 	"time"
 

@@ -1,7 +1,7 @@
 package rpc
 
 import (
-	"admin/core"
+	"github.com/huangxinchun/hxcgo/admin/core"
 	"fmt"
 	"net/rpc"
 	"time"

@@ -1,7 +1,7 @@
 package pkg
 
 import (
-	"admin/app/proto/adminprivilegeproto"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/adminprivilegeproto"
 )
 
 type Node struct {

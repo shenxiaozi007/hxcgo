@@ -1,14 +1,14 @@
 package adminctrl
 
 import (
-	"admin/app/ctrl"
-	"admin/app/proto/admingroupproto"
-	"admin/app/service"
-	"admin/app/service/adminservice"
+	"github.com/huangxinchun/hxcgo/admin/app/ctrl"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/admingroupproto"
+	"github.com/huangxinchun/hxcgo/admin/app/service"
+	"github.com/huangxinchun/hxcgo/admin/app/service/adminservice"
 	"fmt"
 	"strconv"
 
-	e "admin/app/err"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
 
 	"github.com/gin-gonic/gin"
 )

@@ -1,7 +1,7 @@
 package service
 
 import (
-	"admin/core/opt"
+	"github.com/huangxinchun/hxcgo/admin/core/opt"
 	"strings"
 
 	"github.com/disintegration/imaging"

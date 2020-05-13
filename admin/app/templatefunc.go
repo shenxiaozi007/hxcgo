@@ -1,6 +1,6 @@
 package app
 
-import "admin/app/pkg"
+import "github.com/huangxinchun/hxcgo/admin/app/pkg"
 
 func IsGranted(sess *pkg.Session,uri string) bool {
 	return sess.IsGranted(uri)

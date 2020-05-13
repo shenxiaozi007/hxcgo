@@ -1,11 +1,11 @@
 package adminctrl
 
 import (
-	"admin/app/ctrl"
-	e "admin/app/err"
-	"admin/app/pkg"
-	"admin/app/proto/adminprivilegeproto"
-	"admin/app/service/adminservice"
+	"github.com/huangxinchun/hxcgo/admin/app/ctrl"
+	e "github.com/huangxinchun/hxcgo/admin/app/err"
+	"github.com/huangxinchun/hxcgo/admin/app/pkg"
+	"github.com/huangxinchun/hxcgo/admin/app/proto/adminprivilegeproto"
+	"github.com/huangxinchun/hxcgo/admin/app/service/adminservice"
 	"encoding/json"
 	"fmt"
 	"log"
