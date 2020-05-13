@@ -1,0 +1,175 @@
+{{define "content"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>管理后台</title>
+
+    <!-- Bootstrap -->
+    <link href="/resource/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/resource/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/resource/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="/resource/vendors/animate.css/animate.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="/resource/css/custom.css" rel="stylesheet">
+
+    <style>
+        .error_message {
+            text-align: center;
+        }
+        .alert {
+            border-radius:0;
+            display: none;
+        }
+
+        .login_item {
+            margin-bottom: 20px;
+        }
+
+        .login_form .submit {
+            float: left;
+        }
+
+        .captcha {
+            padding-left: 5px;
+        }
+    </style>
+</head>
+
+<body class="login">
+<div class="alert alert-danger alert-dismissible" role="alert">
+    <button type="button" class="close"><span aria-hidden="true">×</span>
+    </button>
+    <div class="error_message">错误提示！</div>
+</div>
+<div>
+    <div class="login_wrapper">
+        <div class="animate form login_form">
+            <section class="login_content">
+                <form>
+                    <h1>管理后台</h1>
+                    <div class="login_item">
+                        <input type="text" name="username" class="form-control" placeholder="用户名" required="" />
+                    </div>
+                    <div class="login_item">
+                        <input type="password" name="password" class="form-control" placeholder="密码" required="" />
+                    </div>
+
+                    <div class="input-group login_item">
+                        <input type="text"  name="captcha_code" class="form-control" placeholder="验证码" required="">
+                        <input type="hidden" name="captcha_id" value="{{.captchaID}}">
+                        <span class="input-group-btn">
+                            <img class="captcha" style="height: 34px;cursor: pointer;" src="/captcha/90/34/{{.captchaID}}" title="点击刷新">
+                        </span>
+                    </div>
+
+                    <div>
+                        <a class="btn btn-default submit" href="javascript:">登录</a>
+{{/*                        <a class="reset_pass" href="#">Lost your password?</a>*/}}
+                    </div>
+
+                    <div class="clearfix"></div>
+
+                    <div class="separator">
+{{/*                        <p class="change_link">New to site?*/}}
+{{/*                            <a href="#signup" class="to_register"> Create Account </a>*/}}
+{{/*                        </p>*/}}
+
+{{/*                        <div class="clearfix"></div>*/}}
+{{/*                        <br />*/}}
+
+                        <div>
+{{/*                            <h1><i class="fa fa-paw"></i> Gentelella Alela!</h1>*/}}
+                            <p>©2019 moban.com 版权所有. </p>
+                        </div>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+</body>
+<script src="/resource/vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="/resource/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        function closeError() {
+            $('.alert').fadeOut(2000);
+        }
+
+        function showError(message) {
+            $('.error_message').html(message);
+            $('.alert').fadeIn(1000);
+
+            setInterval(closeError,10000)
+        }
+
+        function reloadCaptcha() {
+            $('.captcha').attr("src","/captcha/90/34/"+$('input[name=captcha_id]').val()+"?_r="+Math.random());
+        }
+
+        $('.captcha').click(function () {
+            reloadCaptcha();
+        })
+
+        //$('.alert').fadeIn(2000);
+
+        $('.close').click(function () {
+            closeError();
+        })
+
+        $('.submit').click(function () {
+            var username = $('input[name=username]').val();
+            var password = $('input[name=password]').val();
+            var captcha_code = $('input[name=captcha_code]').val();
+            var captcha_id = $('input[name=captcha_id]').val();
+
+            if (username.length < 6){
+                showError("用户名不能少于6个字符");
+                return
+            }
+
+            if (password.length < 6 ){
+                showError("密码长度太短");
+                return;
+            }
+
+            if (captcha_id.length < 6 || captcha_code.length != 4){
+                showError("验证码错误");
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/session",
+                data: "username="+username+"&password="+password+"&captcha_id="+captcha_id+"&captcha_code="+captcha_code,
+                dataType:"json",
+                success: function(ret){
+                    if(ret.code != ""){
+                        showError(ret.msg)
+                        if (ret.data.captcha_id != ""){
+                            $('input[name=captcha_id]').val(ret.data.captcha_id)
+                        }
+                        reloadCaptcha();
+                    }else{
+                        location.href = '/admin/profile';
+                    }
+                }
+            });
+        })
+    })
+</script>
+
+</html>
+{{end}}

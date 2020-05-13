@@ -1,32 +1,13 @@
 package err
 
-import (
-	"errors"
-
-	"github.com/jinzhu/gorm"
-)
+import "errors"
 
 var (
-	EParam                      = errors.New("param error")
-	EParamInvalidID             = errors.New("param error: invalid id")
-	EParamInvalidOpenID         = errors.New("param error: invalid open id")
-	EParamInvalidName           = errors.New("param error: invalid name")
-	EDatabase                   = errors.New("database error")
-	ENotFound                   = errors.New("not found")
-	EParamInvalidPage           = errors.New("param error: invalid page")
-	EParamInvalidLimit          = errors.New("param error: invalid limit")
-	EDeleteFailed               = errors.New("delete failed")
-	EParamInvalidCategoryID     = errors.New("param error: invalid category id")
-	EParamInvalidTitle          = errors.New("param error: invalid title")
-	EParamInvalidWholesalePrice = errors.New("param error: invalid wholesale price")
-	EParamInvalidImage          = errors.New("param error: invalid image")
-	EParamInvalidProductID      = errors.New("param error: invalid product id")
+	ERequest   = errors.New("err_request")
+	ESign      = errors.New("err_sign")
+	EParam     = errors.New("err_param")
+	EProductID = errors.New("err_product_id")
+	ECode      = errors.New("err_code")
+	ENotFound  = errors.New("not found")
+	EResponse  = errors.New("err_response")
 )
-
-func DBError(err error) error {
-	if err == gorm.ErrRecordNotFound {
-		return ENotFound
-	}
-
-	return EDatabase
-}

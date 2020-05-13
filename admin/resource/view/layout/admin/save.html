@@ -1,0 +1,245 @@
+{{define "content"}}
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>{{if .id}} 更新管理员 {{else}} 添加管理员 {{end}}</h3>
+            </div>
+            {{if .id}}
+                {{if (isGranted .session "/admin/account/add")}}
+            <div class="title_right">
+                <a href="/admin/account/add" class="btn btn-primary" type="button">添加管理员</a>
+            </div>
+                {{end}}
+            {{end}}
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br />
+                        <form data-parsley-validate class="form-horizontal form-label-left" action="{{if .id}}/admin/account/update{{else}}/admin/account/add{{end}}" method="post">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">选择分组</label>
+                                <div class="col-md-3 col-sm-3 col-xs-6">
+                                    <select class="form-control" id="groupID" name="groupID">
+                                        <option value="0">请选择</option>
+                                        {{range $k,$group := .groups}}
+                                        <option value="{{$group.ID}}"  {{if eq $group.ID $.groupID}} selected {{end}}>{{$group.Name}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">用户名称 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="name" required="required" name="name" class="form-control col-md-7 col-xs-12" value="{{.name}}">
+                                </div>
+                                <span class="help-block">不能纯数字，至少5个字符</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">邮箱 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="email" name="email" class="form-control col-md-7 col-xs-12" value="{{.email}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="mobile">手机号 <span class="required"></span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="mobile" name="mobile" class="form-control col-md-7 col-xs-12" value="{{.mobile}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">密码 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="password" id="password" required="required" name="password" class="form-control col-md-7 col-xs-12" value="{{.password}}">
+                                </div>
+                                <span class="help-block">不能纯数字或字母，至少8个字符</span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="passwordConfirm">确认密码 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="password" id="passwordConfirm" required="required" name="passwordConfirm" class="form-control col-md-7 col-xs-12" value="{{.password}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否启用</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch" name="isEnable"
+                                                {{if .isEnable }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">头像上传</label>
+                                <div class="col-sm-9">
+                                    <div class="uploader">
+                                        <div class="preview">
+                                            <i style="font-size: 36px;" class="fa fa-cloud-upload"></i>
+                                        </div>
+
+                                        <input id="imageFile" type="file" name="imageFile">
+                                        <div id="progress" class="overlay"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" name="id" value="{{.id}}">
+                                <input type="hidden" name="avatar" value="">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3 col-sm-offset-3">
+                                    <a href="/admin/accounts"
+                                       class="btn btn-primary">返回列表</a>
+                                    <button type="submit" class="btn btn-success submit">保存</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+{{define "footer"}}
+<script src="/resource/vendors/jquery.fileupload/vendor/jquery.ui.widget.js"></script>
+<script src="/resource/vendors/jquery.fileupload/jquery.fileupload.js"></script>
+{{block "modal_delete" .}} {{end}}
+<script type="text/javascript">
+    $(function () {
+        var avatar = "{{.avatar}}"
+        if (avatar != "") {
+            $(".preview").html("<img width='80'  src='"+avatar.replace(/{size}/,"128x128")+"' >");
+        }
+
+        function errorMessage(msg){
+            new PNotify({
+                title: "出错了",
+                type: 'error',
+                text: msg,
+                nonblock: {
+                    nonblock: true
+                },
+                styling: 'bootstrap3',
+                delay:'2500'
+            })
+        }
+        $('#imageFile').fileupload({
+            url: "/image/upload?size=80x80",
+            dataType: 'json',
+            formData: function (form) {},
+            done: function (e, data) {
+                console.log(data)
+                if (data.result.code == 0){
+                    $(".preview").html("<img src='"+data.result.data.thumb+"' >");
+                    $('input[name=avatar]').val(data.result.data.src);
+                }else{
+                    errorMessage(data.result.msg);
+                }
+            }
+        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+
+
+        $('.form-control').click(function () {
+            $(this).parent().removeClass("has-error");
+        });
+
+        $('.submit').click(function(){
+            if($('#groupID').val() == 0){
+                errorMessage("请选择分组");
+                $('#groupID').parent().addClass('has-error');
+                return false;
+            }
+
+            var name = $('#name').val();
+            var regName = new RegExp("^[0-9]*$")
+            if(!name || name.length < 5 || regName.test(name)){
+                errorMessage("帐号至少5个字符，不能单纯数字");
+                $('#name').parent().addClass('has-error');
+                return false;
+            }
+            var mobile = $('#mobile').val();
+            var regMobile = new RegExp("^[1][3,4,5,6,7,8,9][0-9]{9}$");
+            if(mobile && !regMobile.test(mobile)){
+                errorMessage("手机号输入有误");
+                $('#mobile').parent().addClass('has-error');
+                return false;
+            }
+            var email = $('#email').val();
+            var regEmail = new RegExp("^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$");
+            if(email && !regEmail.test(email)){
+                errorMessage("邮箱格式错误");
+                $('#email').parent().addClass('has-error');
+                return false;
+            }
+            var password = $('#password').val();
+            var regPasswordNum = new RegExp("^[0-9]*$");
+            var regPasswordAlphabet = new RegExp("^[A-Za-z]+$")
+            if(password.length < 8 || regPasswordNum.test(password) || regPasswordAlphabet.test(password)){
+                errorMessage("密码不能少于8位，不能纯数字或字母");
+                $('#password').parent().addClass('has-error');
+                return false;
+            }
+            var repeatPassword = $('#passwordConfirm').val();
+            if(password != repeatPassword){
+                errorMessage("两次密码不相等");
+                $('#passwordConfirm').parent().addClass('has-error');
+                $('#password').parent().addClass('has-error');
+                return false;
+            }
+
+            var isEnable = ""
+            if (document.querySelector('.js-switch').checked) {
+                isEnable = "on"
+            }
+            $("input[name=isEnable]").val(isEnable);
+
+            $('.has-error').removeClass('.has-error');
+
+            $.ajax({
+                type: "POST",
+                url: $('form').attr("action"),
+                data: $('form').serialize(),
+                dataType:"json",
+                success: function(ret){
+                    if(ret.code == 0){
+                        new PNotify({
+                            title: "(^_^)恭喜您！",
+                            type: 'success',
+                            text: "操作成功了",
+                            nonblock: {
+                                nonblock: true
+                            },
+                            styling: 'bootstrap3',
+                            delay:'2500'
+                        })
+                        setInterval(function () {
+                            location.href = "/admin/account/update/"+ret.data.ID
+                        },1500)
+                    }else{
+                        errorMessage(ret.msg)
+
+                    }
+                }
+            });
+
+            return false;
+        });
+    })
+</script>
+{{end}}

@@ -1,7 +1,7 @@
 package redis
 
 import (
-	"github.com/huangxinchun/hxcgo/admin/core"
+	"admin/core"
 	"fmt"
 	"github.com/go-redis/redis"
 )

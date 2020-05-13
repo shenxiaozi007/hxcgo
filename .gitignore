@@ -1,3 +1,12 @@
-.idea
-vendor
+nob/conf/config.json
 admin/conf/config.json
+services/admin/conf/config.json
+services/nob/conf/config.json
+services/wechat/conf/config.json
+admin/resource/upload
+nob/resource/images
+.idea/
+admin/main
+calendar/main
+sql
+services/main

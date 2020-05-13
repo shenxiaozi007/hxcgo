@@ -1,0 +1,280 @@
+{{define "content"}}
+    <link href="/resource/vendors/summernote//summernote.css" rel="stylesheet">
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>{{if .id}} 更新产品 {{else}} 添加产品 {{end}}</h3>
+            </div>
+            {{if .id}}
+                {{if (isGranted .session "/nob/product/add")}}
+                <div class="title_right">
+                    <a href="/nob/product/add" class="btn btn-primary" type="button">添加产品</a>
+                </div>
+                {{end}}
+            {{end}}
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br />
+                        <form data-parsley-validate class="form-horizontal form-label-left" action="{{if .id}}/nob/product/update{{else}}/nob/product/add{{end}}" method="post">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">产品类型 <span class="required">*</span></label>
+                                <div class="col-md-3 col-sm-3 col-xs-6">
+                                    <select class="form-control" id="categoryID" name="categoryID">
+                                        <option value="0">请选择</option>
+                                        {{range $k,$name := .categories}}
+                                            <option value="{{$k}}"  {{if eq $k $.categoryID}} selected {{end}}>{{$name}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="title">产品标题 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="title" required name="title" class="form-control col-md-7 col-xs-12" value="{{.title}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="wholesalePrice">批发价格 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="number" id="wholesalePrice" required name="wholesalePrice" class="form-control col-md-7 col-xs-12" value="{{.wholesalePrice}}">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="costPrice">成本价格</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="number" id="costPrice" name="costPrice" class="form-control col-md-7 col-xs-12" value="{{.costPrice}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="sortOrder">成本价格</span>
+                                </label>
+                                <div class="col-md-3 col-sm-3 col-xs-6">
+                                    <input type="number" id="sortOrder" name="sortOrder" class="form-control col-md-7 col-xs-12" value="{{.sortOrder}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否启用</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch isEnable" name="isEnable"
+                                                {{if .isEnable }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否新品</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch isNew" name="isNew"
+                                                {{if .isNew }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否授权才能看到</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch isAuthorized" name="isAuthorized"
+                                                {{if .isAuthorized }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">产品图片 <span class="required">*</span></label>
+                                <div class="col-md-6 col-sm-6 col-xs-8">
+                                    <div class="preview col-sm-12">
+                                        <table class="table table-hover">
+                                            <tbody>
+                                            {{range $k,$img := .images}}
+                                                <tr>
+                                                    <td><img width="80" src="/resource/img/loading.gif"></td>
+                                                    <td >
+                                                        <a href="javascript:" class="btn btn-primary btn-xs setCoverImage"
+                                                           {{if eq $img $.coverImage}}disabled="disabled" {{end}}>设为封面图</a>
+                                                        <a href="javascript:" class="btn btn-danger btn-xs delete">删除</a>
+                                                        <input type="hidden" name="images[]" value="{{$img}}">
+                                                    </td>
+                                                </tr>
+                                            {{end}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="uploader col-sm-12">
+
+                                        <i style="font-size: 36px;" class="fa fa-plus"></i>
+                                        <input id="imageFile" type="file" name="imageFile" multiple>
+                                        <div id="progress" class="overlay"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">产品描述</label>
+                                <div class="col-md-9 col-sm-9 col-xs-12">
+                                    <textarea id="summernote" name="desc">{{.desc}}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" name="id" value="{{.id}}">
+                                <input type="hidden" name="coverImage" value="{{.coverImage}}">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3 col-sm-offset-3">
+                                    <a href="/nob/products"
+                                       class="btn btn-primary">返回列表</a>
+                                    <button type="submit" class="btn btn-success submit">保存</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+{{define "footer"}}
+<script src="/resource/vendors/summernote/summernote.js"></script>
+<script src="/resource/vendors/jquery.fileupload/vendor/jquery.ui.widget.js"></script>
+<script src="/resource/vendors/jquery.fileupload/jquery.fileupload.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $(".preview tbody tr").each(function (i) {
+
+            var imageSrc = $(this).find("input").val()
+            $(this).find("img").attr("src",imageSrc.replace(/{size}/,"250x250"))
+        })
+
+        $('#summernote').summernote({
+            height: 300
+        });
+
+        function errorMessage(msg){
+            new PNotify({
+                title: "出错了",
+                type: 'error',
+                text: msg,
+                nonblock: {
+                    nonblock: true
+                },
+                styling: 'bootstrap3',
+                delay:'2500'
+            })
+        }
+        $('#imageFile').fileupload({
+            url: "/image/upload?size=80x80",
+            dataType: 'json',
+            formData: function (form) {},
+            done: function (e, data) {
+                console.log(data)
+                if (data.result.code == 0){
+                    var html = '<tr>';
+                    html += '<td><img width="80" src="'+data.result.data.thumb+'"></td>';
+                    html += '<td>';
+                    html += '<a href="javascript:" class="btn btn-primary btn-xs setCoverImage">设为封面图</a>';
+                    html += '<a href="javascript:" class="btn btn-danger btn-xs delete">删除</a>';
+                    html += '<input type="hidden" name="images[]" value="'+data.result.data.src+'">';
+                    html += '</td>';
+                    html += '</tr>';
+
+                    $(".preview tbody").append(html);
+                }else{
+                    errorMessage(data.result.msg);
+                }
+            }
+        }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+        $("body").on("click",".setCoverImage",function () {
+            $(".setCoverImage").removeAttr("disabled");
+            $(this).attr("disabled",true)
+            $("input[name=coverImage]").val($(this).parent().find("input").val())
+        });
+
+        $("body").on("click",".delete",function () {
+            $(this).parents("tr").remove();
+        });
+
+        $('.form-control').click(function () {
+            $(this).parent().removeClass("has-error");
+        });
+
+        $('.submit').click(function(){
+            var categoryID = $('#categoryID').val();
+            if(categoryID < 1){
+                errorMessage("请选择分类");
+                $('#groupID').parent().addClass('has-error');
+                return false;
+            }
+
+            var title = $('#title').val();
+            if(title == "" ){
+                errorMessage("请填写标题");
+                $('#name').parent().addClass('has-error');
+                return false;
+            }
+            var wholesalePrice = $('#wholesalePrice').val();
+            if(wholesalePrice <= 0){
+                errorMessage("请填写批发价");
+                $('#mobile').parent().addClass('has-error');
+                return false;
+            }
+
+            if (document.querySelector('.isEnable').checked) {
+                $("input[name=isEnable]").val("on");
+            }
+            if (document.querySelector('.isNew').checked) {
+                $("input[name=isNew]").val("on");
+            }
+            if (document.querySelector('.isAuthorized').checked) {
+                $("input[name=isAuthorized]").val("on");
+            }
+            $('.has-error').removeClass('.has-error');
+
+            $.ajax({
+                type: "POST",
+                url: $('form').attr("action"),
+                data: $('form').serialize(),
+                dataType:"json",
+                success: function(ret){
+                    if(ret.code == 0){
+                        new PNotify({
+                            title: "(^_^)恭喜您！",
+                            type: 'success',
+                            text: "操作成功了",
+                            nonblock: {
+                                nonblock: true
+                            },
+                            styling: 'bootstrap3',
+                            delay:'2500'
+                        })
+                        setInterval(function () {
+                            location.href = "/nob/product/update/"+ret.data.ID
+                        },1500)
+                    }else{
+                        errorMessage(ret.msg)
+
+                    }
+                }
+            });
+
+            return false;
+        });
+    })
+</script>
+{{end}}

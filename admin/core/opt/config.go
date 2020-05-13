@@ -1,7 +1,7 @@
 package opt
 
 import (
-	"github.com/huangxinchun/hxcgo/admin/core"
+	"admin/core"
 	"encoding/json"
 	"io/ioutil"
 )

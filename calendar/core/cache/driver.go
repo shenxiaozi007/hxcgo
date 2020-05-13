@@ -3,11 +3,10 @@ package cache
 import (
 	"bytes"
 	"encoding/gob"
-	"github.com/go-redis/redis"
 	"time"
+
+	"github.com/go-redis/redis"
 )
-
-
 
 type RedisDriver struct {
 	client *redis.Client
@@ -15,11 +14,11 @@ type RedisDriver struct {
 
 func NewRedisDriver(client *redis.Client) *RedisDriver {
 	return &RedisDriver{
-		client:client,
+		client: client,
 	}
 }
 
-func(r *RedisDriver) Get(key string,v interface{}) error {
+func (r *RedisDriver) Get(key string, v interface{}) error {
 	buf, err := r.client.Get(key).Bytes()
 	if err != nil {
 		return err
@@ -31,7 +30,7 @@ func(r *RedisDriver) Get(key string,v interface{}) error {
 	return err
 }
 
-func(r *RedisDriver) Set(key string,v interface{},exp time.Duration) error {
+func (r *RedisDriver) Set(key string, v interface{}, exp time.Duration) error {
 	var writer bytes.Buffer
 
 	enc := gob.NewEncoder(&writer)
@@ -40,5 +39,5 @@ func(r *RedisDriver) Set(key string,v interface{},exp time.Duration) error {
 		return err
 	}
 
-	return r.client.Set(key,writer.Bytes(),exp).Err()
+	return r.client.Set(key, writer.Bytes(), exp).Err()
 }

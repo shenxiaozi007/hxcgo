@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{block "title" .}}管理后台{{end}}</title>
+
+    <!-- Bootstrap -->
+    <link href="/resource/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/resource/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/resource/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link href="/resource/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <link href="/resource/vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+
+    <link href="/resource/vendors/pnotify/dist/pnotify.css" rel="stylesheet">
+    <link href="/resource/vendors/pnotify/dist/pnotify.nonblock.css" rel="stylesheet">
+
+    <!-- iCheck -->
+    <link href="/resource/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+    <!-- Select2 -->
+    <link href="/resource/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="/resource/vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+
+    <!-- Custom Theme Style -->
+    <link href="/resource/css/custom.css" rel="stylesheet">
+    {{block "header" .}}{{end}}
+</head>
+
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <div class="col-md-3 left_col">
+            <div class="left_col scroll-view">
+                <div class="navbar nav_title" style="border: 0;">
+                    <a href="index.html" class="site_title"><i class="fa fa-paw"></i> <span>Gentelella Alela!</span></a>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <!-- menu profile quick info -->
+                <div class="profile clearfix">
+                    <div class="profile_pic">
+                        <img src="/resource/img/user.jpg" class="img-circle profile_img _adminAvatar">
+                    </div>
+                    <div class="profile_info">
+                        <span>Welcome,{{isGranted .session "/nob/users"}}</span>
+                        <h2>{{.session.Name}}</h2>
+                    </div>
+                </div>
+                <!-- /menu profile quick info -->
+
+                <br />
+
+                <!-- sidebar menu -->
+                <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                    <div class="menu_section">
+                        <h3>General</h3>
+                        <ul class="nav side-menu">
+{{/*                            <li><a><i class="fa fa-home"></i> Home <span class="fa fa-chevron-down"></span></a>*/}}
+{{/*                                <ul class="nav child_menu">*/}}
+{{/*                                    <li><a href="index.html">Dashboard</a></li>*/}}
+{{/*                                    <li><a href="index2.html">Dashboard2</a></li>*/}}
+{{/*                                    <li><a href="index3.html">Dashboard3</a></li>*/}}
+{{/*                                </ul>*/}}
+{{/*                            </li>*/}}
+{{/*                            <li><a><i class="fa fa-user"></i> 后台配置 <span class="fa fa-chevron-down"></span></a>*/}}
+{{/*                                <ul class="nav child_menu">*/}}
+{{/*                                    <li><a href="/admin/accounts">管理员</a></li>*/}}
+{{/*                                    <li><a href="/admin/groups">分组管理</a></li>*/}}
+{{/*                                    <li><a href="/admin/roles">角色管理</a></li>*/}}
+{{/*                                    <li><a href="/admin/privileges">权限分配</a></li>*/}}
+{{/*                                    <li><a href="/admin/profile">个人信息</a></li>*/}}
+{{/*                                </ul>*/}}
+{{/*                            </li>*/}}
+                            {{range $k,$v := .sidebarMenus}}
+                                {{$lenChildren := len $v.Children}}
+                                    {{if gt $lenChildren 0}}
+                            <li class="sidebarMenu" len="{{len $v.Children}}"><a><i class="fa {{$v.Data.Icon}}"></i> {{$v.Data.Name}} <span class="fa fa-chevron-down"></span></a>
+                                <ul class="nav child_menu">
+                                    {{range $sk,$sub := $v.Children}}
+                                    <li {{if eq $.activeMenuID $sub.Data.ID}} class="current-page" {{end}}><a href="{{$sub.Data.URIRule}}">{{$sub.Data.Name}}</a></li>
+                                    {{end}}
+                                </ul>
+                            </li>
+                                    {{end}}
+                            {{end}}
+{{/*                            <li><a><i class="fa fa-weixin"></i> 微信小程序 <span class="fa fa-chevron-down"></span></a>*/}}
+{{/*                                <ul class="nav child_menu">*/}}
+{{/*                                    <li><a href="/nob/users">微信用户</a></li>*/}}
+{{/*                                    <li><a href="/nob/products">产品管理</a></li>*/}}
+{{/*                                </ul>*/}}
+{{/*                            </li>*/}}
+                        </ul>
+                    </div>
+
+                </div>
+                <!-- /sidebar menu -->
+            </div>
+        </div>
+
+        <!-- top navigation -->
+        <div class="top_nav">
+            <div class="nav_menu">
+                <nav>
+                    <div class="nav toggle">
+                        <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                    </div>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="">
+                            <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                <img src="/resource/img/user.jpg" alt="" class="_adminAvatar">{{.session.Name}}
+                                <span class=" fa fa-angle-down"></span>
+                            </a>
+                            <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                <li><a href="/admin/profile"> 个人信息</a></li>
+                                <li><a href="/logout"><i class="fa fa-sign-out pull-right"></i> 退出登录</a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- /top navigation -->
+
+        <!-- page content -->
+        {{block "content" .}}{{end}}
+        <!-- /page content -->
+
+        <!-- footer content -->
+        <footer>
+            <div class="pull-right">
+                Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
+            </div>
+            <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+    </div>
+</div>
+
+<!-- jQuery -->
+<script src="/resource/vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="/resource/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="/resource/vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="/resource/vendors/nprogress/nprogress.js"></script>
+<!-- morris.js -->
+<script src="/resource/vendors/raphael/raphael.min.js"></script>
+<script src="/resource/vendors/morris.js/morris.min.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="/resource/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- bootstrap-daterangepicker -->
+<script src="/resource/vendors/moment/min/moment.min.js"></script>
+<script src="/resource/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
+<script src="/resource/vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+<!-- Switchery -->
+<script src="/resource/vendors/switchery/dist/switchery.min.js"></script>
+<!-- Select2 -->
+<script src="/resource/vendors/select2/dist/js/select2.full.min.js"></script>
+
+<script src="/resource/vendors/pnotify/dist/pnotify.js"></script>
+<script src="/resource/vendors/pnotify/dist/pnotify.nonblock.js"></script>
+
+<!-- iCheck -->
+<script src="/resource/vendors/iCheck/icheck.min.js"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="/resource/js/custom.js"></script>
+<script type="text/javascript">
+    $(function () {
+        var currentAdminAvatar = "{{.session.Avatar}}"
+        if (currentAdminAvatar != "") {
+            $("._adminAvatar").attr("src",currentAdminAvatar.replace(/{size}/,"128x128"));
+        }
+
+        $(".current-page").parent("ul").css("display","block");
+        $(".current-page").parent("ul").parent("li").addClass("active")
+    })
+</script>
+{{block "footer" .}}{{end}}
+
+{{define "modal_delete"}}
+    <!--删除警告-->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close deleteCancel" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <div class="i-circle warning"><i class="fa fa-warning"></i></div>
+                        <h4>警告！</h4>
+                        <p>您是否确定要删除此记录？</p>
+                    </div>
+                </div>
+                <input type="hidden" name="deleteID" id="deleteID" value="">
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default deleteCancel" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-warning deleteConfirm" data-dismiss="modal">删除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            //取消警告
+            $('.deleteCancel').click(function(){
+                $('#deleteID').val('');
+            })
+        })
+    </script>
+{{end}}
+</body>
+</html>

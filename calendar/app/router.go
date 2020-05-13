@@ -2,12 +2,13 @@ package app
 
 import (
 	"calendar/app/ctrl"
-	"net/rpc"
+	"calendar/core/middleware"
+
+	"github.com/gin-gonic/gin"
 )
 
-func InitRouter() error {
-	rpc.Register(ctrl.NewUser())
-
-	rpc.HandleHTTP()
-	return nil
+func InitRouter(router *gin.Engine) {
+	router.Use(middleware.AuthRequired)
+	session := ctrl.NewSession()
+	router.POST("/session", session.Login)
 }

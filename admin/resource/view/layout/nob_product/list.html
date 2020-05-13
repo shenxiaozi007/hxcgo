@@ -1,0 +1,202 @@
+{{define "content"}}
+<div class="right_col" role="main">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>产品列表</h3>
+        </div>
+
+        {{if (isGranted .session "/nob/product/add")}}
+        <div class="title_right">
+            <a href="/nob/product/add" class="btn btn-primary" type="button">添加产品</a>
+        </div>
+        {{end}}
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <form class="form-inline searchCondition">
+                        <div class="form-group">
+                            <label>标题</label>
+                            <input type="text" class="form-control" name="title" value="{{.qTitle}}" placeholder="产品标题">
+                        </div>
+                        <div class="form-group">
+                            <label>分类</label>
+                            <select name="category_id" class="form-control">
+                                <option value="0">请选择</option>
+                                {{range $k,$name := .categories}}
+                                    <option value="{{$k}}"  {{if eq $k $.qCategoryID}} selected {{end}}>{{$name}}</option>
+                                {{end}}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select name="state" class="form-control">
+                                <option value="-1">请选择</option>
+                                <option value="0" {{if eq .qState 0}} selected {{end}}>启用</option>
+                                <option value="1" {{if eq .qState 1}} selected {{end}}>关闭</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label>是否新品</label>
+                            <select name="is_new" class="form-control">
+                                <option value="-1">请选择</option>
+                                <option value="0" {{if eq .qIsNew 0}} selected {{end}}>否</option>
+                                <option value="1" {{if eq .qIsNew 1}} selected {{end}}>是</option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>是否授权</label>
+                            <select name="is_authorized" class="form-control">
+                                <option value="-1">请选择</option>
+                                <option value="0" {{if eq .qIsAuthorized 0}} selected {{end}}>否</option>
+                                <option value="1" {{if eq .qIsAuthorized 1}} selected {{end}}>是</option>
+                            </select>
+
+                        </div>
+
+                        <div class="form-group">
+                            <label>添加时间</label>
+                            <input type='text' name="create_begin_time" class="form-control date"  id='createBeginTime' value="{{.qCreateBeginTime}}"/>
+                            至
+                            <input type='text' name="create_end_time" class="form-control date" id='createEndTime' value="{{.qCreateEndTime}}"/>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">筛选</button>
+                            <a href="/nob/products" class="btn btn-warning">清除筛选</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="x_content">
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>标题</th>
+                            <th>分类</th>
+                            <th>批发价</th>
+                            <th>成本价</th>
+                            <th>状态</th>
+                            <th>是否授权</th>
+                            <th>是否新品</th>
+                            <th>添加时间</th>
+                            <th>缩略图</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{$isGrantedUpdate := isGranted .session "/nob/product/update"}}
+                        {{$isGrantedDelete := isGranted .session "/nob/product/delete"}}
+                        {{range .products}}
+                        <tr>
+                            <th scope="row">{{.ID}}</th>
+                            <td>{{.Title}}</td>
+                            <td>{{.CategoryName}}</td>
+                            <td>{{.WholesalePrice}}</td>
+                            <td>{{.CostPrice}}</td>
+                            <td>{{if eq .State 0 }}<i class="fa fa-check"></i>{{else}}<i class="fa fa-times"></i>{{end}}</td>
+                            <td>{{if eq .IsAuthorized 1 }}<i class="fa fa-check"></i>{{else}}<i class="fa fa-times"></i>{{end}}</td>
+                            <td>{{if eq .IsNew 1 }}<i class="fa fa-check"></i>{{else}}<i class="fa fa-times"></i>{{end}}</td>
+                            <td>{{.CreatedAt}}</td>
+                            <td><img height="80" src="{{.Image}}"></td>
+                            <td>
+                                {{if $isGrantedUpdate}}
+                                <a href="/nob/product/update/{{.ID}}" class="btn btn-primary btn-xs">编辑</a>
+                                {{end}}
+                                {{if $isGrantedDelete}}
+                                <a href="javascript:" data-id="{{.ID}}" class="btn btn-danger btn-xs delete">删除</a>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{end}}
+
+                        </tbody>
+                    </table>
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{define "footer"}}
+<script type="text/javascript" src="/resource/vendors/twbs-pagination/jquery.twbsPagination.js"></script>
+{{block "modal_delete" .}} {{end}}
+<script type="text/javascript">
+    $(function () {
+        $('#createBeginTime,#createEndTime').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            allowInputToggle: true
+        });
+
+        //取消警告
+        $('.delete').click(function(){
+            $('#deleteID').val($(this).attr("data-id"));
+            $("#deleteModal").modal();
+        })
+
+        $("body").on("click",".deleteConfirm",function () {
+            {{if isGranted .session "/nob/product/delete"}}
+            $.post("/nob/product/delete",{"id":$('#deleteID').val()},function(result){
+                if (result.code == 0){
+                    location.reload();
+                    return
+                }
+
+                new PNotify({
+                    title: "出错了",
+                    type: 'error',
+                    text: result.msg,
+                    nonblock: {
+                        nonblock: true
+                    },
+                    styling: 'bootstrap3',
+                    delay:'2500'
+                })
+            });
+            {{end}}
+        })
+
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: 1,
+            visiblePages: 10,
+            startPage:1,
+            first:"首页",
+            last:"尾页",
+            prev:"上一页",
+            next:"下一页",
+            hideOnlyOnePage:true,
+            onPageClick: function (event, page) {
+
+            }
+        }).on('page', function (event, page) {
+            var query = window.location.search.substring(1);
+            var pairs=query.split("&");
+
+            var urlParam = "";
+
+            for(var i=0;i<pairs.length;i++){
+                var kv = pairs[i].split("=");
+                if(kv[0] == "page") {
+                    continue;
+                }
+
+                urlParam += pairs[i]+"&"
+            }
+
+            var url = window.location.pathname + "?"+urlParam+"page="+page;
+            location.href = url
+
+            console.info(page + ' (from options)');
+        });
+    })
+</script>
+{{end}}

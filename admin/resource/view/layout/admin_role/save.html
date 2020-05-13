@@ -1,0 +1,59 @@
+{{define "content"}}
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>{{if .id}} 更新角色 {{else}} 添加角色 {{end}}</h3>
+            </div>
+            {{if .id}}
+                {{if (isGranted .session "/admin/role/add")}}
+                <div class="title_right">
+                    <a href="/admin/role/add" class="btn btn-primary" type="button">添加角色</a>
+                </div>
+                {{end}}
+            {{end}}
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br />
+                        <form id="demo-form2" data-parsley-validate class="form-horizontal form-label-left" action="{{if .id}}/admin/role/update{{else}}/admin/role/add{{end}}" method="post">
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">角色名称 <span class="required">*</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="name" required="required" name="name" class="form-control col-md-7 col-xs-12" value="{{.name}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否启用</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch" name="isEnable"
+                                                {{if .isEnable }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="ln_solid"></div>
+                            <div class="form-group">
+                                <input type="hidden" name="id" value="{{.id}}">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                                    <a href="/admin/roles"
+                                       class="btn btn-primary">返回列表</a>
+                                    <button type="submit" class="btn btn-success">保存</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}

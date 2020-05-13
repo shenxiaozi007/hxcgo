@@ -1,0 +1,229 @@
+{{define "content"}}
+    <div class="right_col" role="main">
+        <div class="">
+            <div class="page-title">
+                <div class="title_left">
+                    <h3>个人信息</h3>
+                </div>
+            </div>
+
+            <div class="clearfix"></div>
+
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="x_panel">
+                        <div class="x_content">
+                            <div class="col-md-3 col-sm-3 col-xs-12 profile_left">
+                                <div class="profile_img">
+                                    <div id="crop-avatar">
+                                        <!-- Current avatar -->
+                                        <img class="img-responsive avatar-view" width="128" src="/resource/img/user.jpg" alt="Avatar" title="Change the avatar">
+                                    </div>
+                                </div>
+                                <h3>{{.name}}</h3>
+
+
+                                <table class="no-border no-strip skills">
+                                    <tbody class="no-border-x no-border-y">
+                                    <tr>
+                                        <td>所属分组：</td>
+                                        <td>{{.groupName}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>最后登录IP：</td>
+                                        <td>{{.lastLoginIP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>本次登录IP：</td>
+                                        <td>{{.loginIP}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>最后登录时间：</td>
+                                        <td>{{.lastLoginAt}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                            <div class="col-md-9 col-sm-9 col-xs-12">
+
+                                    <div class="x_content">
+                                        <br />
+                                        <form data-parsley-validate class="form-horizontal form-label-left" action="/admin/profile/update" method="post">
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="email">邮箱 <span class="required"></span>
+                                                </label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input type="text" id="email" name="email" class="form-control col-md-7 col-xs-12" value="{{.email}}">
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="mobile">手机号 <span class="required"></span>
+                                                </label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input type="text" id="mobile" name="mobile" class="form-control col-md-7 col-xs-12" value="{{.mobile}}">
+                                                </div>
+                                            </div>
+
+                                            {{if isGranted .session "/admin/profile/update"}}
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="password">密码 <span class="required">*</span>
+                                                </label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input type="password" id="password" required="required" name="password" class="form-control col-md-7 col-xs-12" value="{{.password}}">
+                                                </div>
+                                                <span class="help-block">不能纯数字或字母，至少8个字符</span>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="passwordConfirm">确认密码 <span class="required">*</span>
+                                                </label>
+                                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                                    <input type="password" id="passwordConfirm" required="required" name="passwordConfirm" class="form-control col-md-7 col-xs-12" value="{{.password}}">
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <label class="col-sm-3 control-label">头像上传</label>
+                                                <div class="col-sm-9">
+                                                    <div class="uploader">
+                                                        <div class="preview">
+                                                            <i style="font-size: 36px;" class="fa fa-cloud-upload"></i>
+                                                        </div>
+
+                                                        <input id="imageFile" type="file" name="imageFile">
+                                                        <div id="progress" class="overlay"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group">
+                                                <input type="hidden" name="avatar" value="">
+                                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3 col-sm-offset-3">
+                                                    <button type="submit" class="btn btn-success submit">保存</button>
+                                                </div>
+                                            </div>
+                                            {{end}}
+                                        </form>
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+
+{{define "footer"}}
+    <script src="/resource/vendors/jquery.fileupload/vendor/jquery.ui.widget.js"></script>
+    <script src="/resource/vendors/jquery.fileupload/jquery.fileupload.js"></script>
+    {{block "modal_delete" .}} {{end}}
+    <script type="text/javascript">
+        $(function () {
+            var avatar = "{{.avatar}}"
+            if (avatar != "") {
+                $(".preview").html("<img width='80'  src='"+avatar.replace(/{size}/,"128x128")+"' >");
+                $("#crop-avatar img").attr("src",avatar.replace(/{size}/,"128x128"));
+            }
+
+            function errorMessage(msg){
+                new PNotify({
+                    title: "出错了",
+                    type: 'error',
+                    text: msg,
+                    nonblock: {
+                        nonblock: true
+                    },
+                    styling: 'bootstrap3',
+                    delay:'2500'
+                })
+            }
+            $('#imageFile').fileupload({
+                url: "/image/upload?size=80x80",
+                dataType: 'json',
+                formData: function (form) {},
+                done: function (e, data) {
+                    console.log(data)
+                    if (data.result.code == 0){
+                        $(".preview").html("<img src='"+data.result.data.thumb+"' >");
+                        $('input[name=avatar]').val(data.result.data.src);
+                    }else{
+                        errorMessage(data.result.msg);
+                    }
+                }
+            }).prop('disabled', !$.support.fileInput).parent().addClass($.support.fileInput ? undefined : 'disabled');
+
+
+
+            $('.form-control').click(function () {
+                $(this).parent().removeClass("has-error");
+            });
+
+            $('.submit').click(function(){
+                var mobile = $('#mobile').val();
+                var regMobile = new RegExp("^[1][3,4,5,6,7,8,9][0-9]{9}$");
+                if(mobile && !regMobile.test(mobile)){
+                    errorMessage("手机号输入有误");
+                    $('#mobile').parent().addClass('has-error');
+                    return false;
+                }
+                var email = $('#email').val();
+                var regEmail = new RegExp("^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$");
+                if(email && !regEmail.test(email)){
+                    errorMessage("邮箱格式错误");
+                    $('#email').parent().addClass('has-error');
+                    return false;
+                }
+                var password = $('#password').val();
+                var regPasswordNum = new RegExp("^[0-9]*$");
+                var regPasswordAlphabet = new RegExp("^[A-Za-z]+$")
+                if(password.length < 8 || regPasswordNum.test(password) || regPasswordAlphabet.test(password)){
+                    errorMessage("密码不能少于8位，不能纯数字或字母");
+                    $('#password').parent().addClass('has-error');
+                    return false;
+                }
+                var repeatPassword = $('#passwordConfirm').val();
+                if(password != repeatPassword){
+                    errorMessage("两次密码不相等");
+                    $('#passwordConfirm').parent().addClass('has-error');
+                    $('#password').parent().addClass('has-error');
+                    return false;
+                }
+
+                $('.has-error').removeClass('.has-error');
+
+                $.ajax({
+                    type: "POST",
+                    url: $('form').attr("action"),
+                    data: $('form').serialize(),
+                    dataType:"json",
+                    success: function(ret){
+                        if(ret.code == 0){
+                            new PNotify({
+                                title: "(^_^)恭喜您！",
+                                type: 'success',
+                                text: "操作成功了",
+                                nonblock: {
+                                    nonblock: true
+                                },
+                                styling: 'bootstrap3',
+                                delay:'2500'
+                            })
+                            setInterval(function () {
+                                window.location.reload();
+                            },1500)
+                        }else{
+                            errorMessage(ret.msg)
+
+                        }
+                    }
+                });
+
+                return false;
+            });
+        })
+    </script>
+{{end}}

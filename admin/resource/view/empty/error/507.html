@@ -1,0 +1,38 @@
+{{block "content" .}}
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <!-- page content -->
+        <div class="col-md-12">
+            <div class="col-middle">
+                <div class="text-center text-center">
+                    <h1 class="error-number">507</h1>
+                    <h2>操作失败了</h2>
+                    <p>
+                        参数缺失{{if .errMsg}}【{{.errMsg}}】{{end}}<span class="clock" style="font-size: 16px;color: red">3</span>
+                        秒后跳转返回上一页或点击 <a href="javascript:" style="color: red" onclick="javascript:history.go(-1)">返回上一页</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+</div>
+{{end}}
+
+{{block "footer" .}}
+
+    <script type="text/javascript">
+        function tick() {
+            var seconds = $('.clock').html()
+            if (seconds < 1) {
+                //window.history.go(-1)
+                return
+            }
+
+            $('.clock').html(seconds-1)
+        }
+        setInterval('tick()',1000)
+    </script>
+{{end}}

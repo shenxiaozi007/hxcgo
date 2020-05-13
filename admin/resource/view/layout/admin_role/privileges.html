@@ -1,0 +1,156 @@
+{{define "content"}}
+    <style>
+        ul,li {
+            list-style: none;
+        }
+        li .close_tree:before {
+            content: '+';
+            background-color: #337ab7;
+        }
+
+        .tree_trunk:before {
+            height: 14px;
+            width: 14px;
+            display: block;
+            position: absolute;
+            color: white;
+            border: 2px solid white;
+            border-radius: 14px;
+            box-shadow: 0 0 3px #444;
+            box-sizing: content-box;
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 14px;
+
+            content: "-";
+            background-color:#d33333;
+        }
+        .tree_trunk {
+            padding-left: 25px;
+
+        }
+
+        li div {
+            padding: 8px;
+            border-bottom: 1px solid #ddd
+        }
+
+        li div span {
+            float: right;
+            padding-right: 10px;
+        }
+
+        .x_content .op{
+            padding-right:20px;
+        }
+        .privilege_resource {
+            padding-right: 20px;
+        }
+
+        .select2 {
+            min-width: 200px !important;
+        }
+
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            display: none;
+        }
+    </style>
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>权限管理</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title" style="display: none">
+                        <input type='checkbox' class='flat' checked='checked'>
+                    </div>
+
+                    <div class="x_content">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+{{define "footer"}}
+
+<script type="text/javascript">
+    $(function () {
+        var isGrantedAssociate = {{isGranted .session "/admin/role/associate_privilege"}}
+        var privilegesJSON = JSON.parse("{{printf "%s" .privilegesJSON}}");
+        var privilegeIDs = JSON.parse("{{printf "%s" .privilegeIDsJSON}}");
+        var roleID = {{.roleID}}
+        function Tree(privileges) {
+            var html = "<ul>";
+            for (var k in privileges)
+            {
+                html += "<li>";
+                html += "   <div>";
+                html += "       <a class='"+(privileges[k].IsLeaf ? "":"tree_trunk")+"'>"+privileges[k].Data.Name+"</a>";
+                if (isGrantedAssociate){
+                    html += "       <span class='op' data-id='"+privileges[k].Data.ID+"'>";
+                    html += "           <input type='checkbox' value='"+privileges[k].Data.ID+"' class='flat' "+(privilegeIDs[privileges[k].Data.ID] != undefined ? "checked":"")+">";
+                    html += "       </span>";
+                }
+                html += "       <span class='privilege_resource'>"+privileges[k].Data.URIRule+"</span>";
+                html += "   </div>";
+                html += privileges[k].Children == null ? "" : Tree(privileges[k].Children);
+                html += "</li>";
+            }
+
+            html += "</ul>";
+            return html
+        }
+
+        $(".x_content").html(Tree(privilegesJSON));
+        $(".x_content input[type=checkbox]").addClass("flat")
+
+        var warpperWidth = $(".x_content").width();
+        var privilegeResourceWidth = 200;
+        var privilegeNameWidth = 330;
+        var opWidth = $(".x_content .op").width();
+        var x = warpperWidth - privilegeNameWidth - privilegeResourceWidth - opWidth;
+
+        if (x > 0){
+            var px = x/2 + "px"
+            console.log(px)
+            $(".privilege_resource").css("padding-right",px)
+        }
+
+        $('input').on('ifClicked', function(event){ //ifCreated 事件应该在插件初始化之前绑定
+            var privilegeID = $(this).val();
+            $(this).iCheck('uncheck');
+            $.ajax({
+                type: "POST",
+                url: "/admin/role/associate_privilege",
+                data:{'privilegeID':privilegeID,'id':roleID},
+                dataType:'json',
+                success: function(ret){
+                    if (ret.code != 0){
+                        new PNotify({
+                            title: "出错了",
+                            type: 'error',
+                            text: ret.msg,
+                            nonblock: {
+                                nonblock: true
+                            },
+                            styling: 'bootstrap3',
+                            delay:'2500'
+                        });
+                        setInterval(function () {
+                            location.reload();
+                        },2500)
+                    }
+
+                }
+            });
+        });
+    })
+</script>
+{{end}}

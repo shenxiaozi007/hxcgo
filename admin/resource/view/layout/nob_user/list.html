@@ -1,0 +1,153 @@
+{{define "content"}}
+<div class="right_col" role="main">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>微信用户列表</h3>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label>名称</label>
+                            <input type="text" class="form-control" name="name" value="{{.qName}}" placeholder="用户名称">
+                        </div>
+                        <div class="form-group">
+                            <label>昵称</label>
+                            <input type="text" class="form-control" name="nick_name" value="{{.qNickName}}" placeholder="用户昵称">
+                        </div>
+
+                        <div class="form-group">
+                            <label>注册时间</label>
+                            <input type='text' name="reg_begin_time" class="form-control date"  id='regBeginTime' value="{{.qRegBeginTime}}"/>
+                            至
+                            <input type='text' name="reg_end_time" class="form-control date" id='regEndTime' value="{{.qRegEndTime}}"/>
+                        </div>
+
+                        <button type="submit" class="btn btn-success">筛选</button>
+                        <a href="/nob/users" class="btn btn-warning">清除筛选</a>
+                    </form>
+                </div>
+                <div class="x_content">
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>名称</th>
+                            <th>昵称</th>
+                            <th>头像</th>
+                            <th>是否授权</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{$isGrantedUpdate := isGranted .session "/nob/user/update"}}
+                        {{$isGrantedDelete := isGranted .session "/nob/user/delete"}}
+                        {{range .users}}
+                        <tr>
+                            <th scope="row">{{.ID}}</th>
+                            <td>{{.Name}}</td>
+                            <td>{{.NickName}}</td>
+                            <td>{{if .Avatar }} <img src="{{.Avatar}}" style="height: 36px" class="img-circle">{{end}} </td>
+                            <td>{{if eq .IsAuthorized 1 }}已{{else}}未{{end}}授权</td>
+                            <td>{{.CreatedAt}}</td>
+                            <td>
+                                {{if $isGrantedUpdate}}
+                                <a href="/nob/user/update/{{.ID}}" class="btn btn-primary btn-xs">编辑</a>
+                                {{end}}
+                                {{if $isGrantedDelete}}
+                                <a href="javascript:" data-id="{{.ID}}" class="btn btn-danger btn-xs delete">删除</a>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{end}}
+
+                        </tbody>
+                    </table>
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{end}}
+
+{{define "footer"}}
+<script type="text/javascript" src="/resource/vendors/twbs-pagination/jquery.twbsPagination.js"></script>
+{{block "modal_delete" .}} {{end}}
+<script type="text/javascript">
+    $(function () {
+        $('#regBeginTime,#regEndTime').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            allowInputToggle: true
+        });
+
+        //取消警告
+        $('.delete').click(function(){
+            $('#deleteID').val($(this).attr("data-id"));
+            $("#deleteModal").modal();
+        })
+
+        $("body").on("click",".deleteConfirm",function () {
+            {{if isGranted .session "/nob/user/delete"}}
+            $.post("/nob/user/delete",{"id":$('#deleteID').val()},function(result){
+                if (result.code == 0){
+                    location.reload();
+                    return
+                }
+
+                new PNotify({
+                    title: "出错了",
+                    type: 'error',
+                    text: result.msg,
+                    nonblock: {
+                        nonblock: true
+                    },
+                    styling: 'bootstrap3',
+                    delay:'2500'
+                })
+            });
+            {{end}}
+        });
+
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: {{if gt .totalPage 0 }}{{.totalPage}}{{else}}1{{end}},
+            visiblePages: 10,
+            startPage:{{.qPage}},
+            first:"首页",
+            last:"尾页",
+            prev:"上一页",
+            next:"下一页",
+            hideOnlyOnePage:true,
+            onPageClick: function (event, page) {
+
+            }
+        }).on('page', function (event, page) {
+            var query = window.location.search.substring(1);
+            var pairs=query.split("&");
+
+            var urlParam = "";
+
+            for(var i=0;i<pairs.length;i++){
+                var kv = pairs[i].split("=");
+                if(kv[0] == "page") {
+                    continue;
+                }
+
+                urlParam += pairs[i]+"&"
+            }
+
+            var url = window.location.pathname + "?"+urlParam+"page="+page;
+            location.href = url
+
+            console.info(page + ' (from options)');
+        });
+    })
+</script>
+{{end}}

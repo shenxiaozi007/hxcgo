@@ -3,13 +3,14 @@ package main
 import (
 	"calendar/app"
 	"calendar/core/cache"
-	"calendar/core/db"
 	"calendar/core/opt"
 	"calendar/core/redis"
+	"calendar/core/rpc"
+	"calendar/core/session"
 	"log"
-	"net"
 	"net/http"
-	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -19,31 +20,29 @@ func main() {
 	}
 	cfg := opt.Config()
 
-	err = app.InitRouter()
-	if err != nil {
-		log.Fatalln("init router error: ", err)
-	}
-
-	err = db.Connect(cfg.DB)
-	if err != nil {
-		log.Fatalln("db connect error: ", err)
-	}
+	engine := gin.Default()
+	engine.Static("/resource", cfg.ResourceDir)
+	engine.StaticFS("/images", http.Dir(cfg.ImageDir))
 
 	err = redis.Connect(cfg.Redis)
 	if err != nil {
-		log.Fatalln("redis connect error: ", err)
+		log.Fatalln("redis error: ", err)
 	}
 
-	log.Println("debug: ")
-	log.Println(redis.Client().Set("test", "111", 10*time.Second).Result())
 	//注册缓存组件
 	cacheDriver := cache.NewRedisDriver(redis.Client())
 	cache.RegisterDriver(cacheDriver)
 
-	ln, e := net.Listen("tcp", cfg.ServerAddr)
-	log.Println("listen addr: ", cfg.ServerAddr)
-	if e != nil {
-		log.Fatal("listen error:", e)
+	err = rpc.Connect(cfg.RPC)
+	if err != nil {
+		log.Fatalln("rpc connect error: ", err)
 	}
-	http.Serve(ln, nil)
+
+	//store, err := core.NewSessionStore(cfg.Session)
+	//engine.Use(sessions.Sessions("session", store))
+
+	engine.Use(session.New("token"))
+
+	app.InitRouter(engine)
+	engine.Run(cfg.ServerAddr)
 }

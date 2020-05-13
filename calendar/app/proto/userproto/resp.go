@@ -1,6 +1,9 @@
 package userproto
 
-import "time"
+import (
+	"calendar/core/rpc"
+	"time"
+)
 
 type User struct {
 	ID           uint
@@ -18,10 +21,22 @@ type User struct {
 	DeletedAt    *time.Time
 }
 
-type QueryResp struct {
-	Users     []*User
-	Page      uint
-	Limit     uint
-	Count     uint
-	TotalPage uint
+func FindByOpenID(openID string) (*User, error) {
+	user := &User{}
+	err := rpc.Service("calendar").Call("User.FindByOpenID", openID, user)
+	return user, err
+}
+
+func (u *User) Create() error {
+	return rpc.Service("calendar").Call("User.Add", u, u)
+}
+
+func (u *User) Update() error {
+	return rpc.Service("calendar").Call("User.Update", u, u)
+}
+func (u *User) Save() error {
+	if u.ID > 0 {
+		return u.Update()
+	}
+	return u.Create()
 }

@@ -1,0 +1,43 @@
+{{block "content" .}}
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <!-- page content -->
+        <div class="col-md-12">
+            <div class="col-middle">
+                <div class="text-center text-center">
+                    <h1 class="error-number">401</h1>
+                    <h2>Oh,shit! 禁止访问了</h2>
+                    <p>
+                        您还没登录或长时间没有操作导致超时退出登陆，<span class="clock" style="font-size: 16px;color: red">3</span>
+                        秒后跳转到登录页或点击 <a href='/login' style="color: red">重新登录</a>
+                    </p>
+
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+</div>
+{{end}}
+
+{{block "footer" .}}
+
+    <script type="text/javascript">
+        function tick() {
+            var seconds = $('.clock').html()
+            if (seconds < 1) {
+                location.href = "/login"
+                return
+            }
+
+            $('.clock').html(seconds-1)
+        }
+        setInterval('tick()',1000)
+        $(function () {
+
+
+
+        })
+    </script>
+{{end}}

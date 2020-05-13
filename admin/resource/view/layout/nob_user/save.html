@@ -1,0 +1,135 @@
+{{define "content"}}
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>更新用户信息</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_content">
+                        <br />
+                        <form data-parsley-validate class="form-horizontal form-label-left" action="{{if .id}}/nob/user/update{{else}}/nob/user/add{{end}}" method="post">
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="name">用户名</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="name" required="required" name="name" class="form-control col-md-7 col-xs-12" value="{{.name}}">
+                                </div>
+
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="nickName">昵称</span>
+                                </label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <input type="text" id="nickName" name="nickName" class="form-control col-md-7 col-xs-12" disabled value="{{.nickName}}">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="control-label col-md-3 col-sm-3 col-xs-12">是否授权</label>
+                                <div class="col-md-6 col-sm-6 col-xs-12">
+                                    <label>
+                                        <input type="checkbox" class="js-switch" name="isEnable"
+                                                {{if .isEnable }} checked {{end}}
+                                        />
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">头像上传</label>
+                                <div class="col-sm-9">
+                                    <div class="uploader">
+                                        <div class="preview">
+                                            <img style="height: 36px;" src="/resource/img/user.jpg" class="img-circle">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <input type="hidden" name="id" value="{{.id}}">
+                                <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3 col-sm-offset-3">
+                                    <a href="/nob/users"
+                                       class="btn btn-primary">返回列表</a>
+                                    <button type="submit" class="btn btn-success submit">保存</button>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{{end}}
+
+{{define "footer"}}
+<script src="/resource/vendors/jquery.fileupload/vendor/jquery.ui.widget.js"></script>
+<script src="/resource/vendors/jquery.fileupload/jquery.fileupload.js"></script>
+{{block "modal_delete" .}} {{end}}
+<script type="text/javascript">
+    $(function () {
+        var avatar = "{{.avatar}}"
+        if (avatar != "") {
+            $(".preview").html('<img style="height: 36px;" src="'+avatar+'" class="img-circle">');
+        }
+
+        function errorMessage(msg){
+            new PNotify({
+                title: "出错了",
+                type: 'error',
+                text: msg,
+                nonblock: {
+                    nonblock: true
+                },
+                styling: 'bootstrap3',
+                delay:'2500'
+            })
+        }
+
+        $('.submit').click(function(){
+
+
+            var isEnable = ""
+            if (document.querySelector('.js-switch').checked) {
+                isEnable = "on"
+            }
+            $("input[name=isEnable]").val(isEnable);
+
+            $.ajax({
+                type: "POST",
+                url: $('form').attr("action"),
+                data: $('form').serialize(),
+                dataType:"json",
+                success: function(ret){
+                    if(ret.code == 0){
+                        new PNotify({
+                            title: "(^_^)恭喜您！",
+                            type: 'success',
+                            text: "操作成功了",
+                            nonblock: {
+                                nonblock: true
+                            },
+                            styling: 'bootstrap3',
+                            delay:'2500'
+                        })
+                        setInterval(function () {
+                            location.href = "/nob/user/update/"+ret.data.ID
+                        },1500)
+                    }else{
+                        errorMessage(ret.msg)
+
+                    }
+                }
+            });
+
+            return false;
+        });
+    })
+</script>
+{{end}}

@@ -1,0 +1,142 @@
+{{define "content"}}
+    <div class="right_col" role="main">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>角色管理</h3>
+            </div>
+            {{if (isGranted .session "/admin/role/add")}}
+            <div class="title_right">
+                <a href="/admin/role/add" class="btn btn-primary" type="button">添加角色</a>
+            </div>
+            {{end}}
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label>状态</label>
+                                    <select name="state" class="form-control">
+                                        <option value="-1">请选择</option>
+                                        <option value="0" {{if eq .qState 0}} selected {{end}}>启用</option>
+                                        <option value="1" {{if eq .qState 1}} selected {{end}}>关闭</option>
+                                    </select>
+
+                            </div>
+                            <button type="submit" class="btn btn-success">筛选</button>
+                        </form>
+                    </div>
+
+                    <div class="x_content">
+
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>#ID</th>
+                                <th>角色名称</th>
+                                <th>是否启用</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {{$isGrantedUpdate := isGranted .session "/admin/role/update"}}
+                            {{$isGrantedDelete := isGranted .session "/admin/role/delete"}}
+                            {{$isGrantedViewPrivilege := isGranted .session "/admin/role/privileges"}}
+
+                            {{range .roles}}
+                            <tr>
+                                <td scope="row">{{.ID}}</td>
+                                <td>{{.Name}}</td>
+                                <td>{{if eq .State 0 }}<i class="fa fa-check"></i>{{else}}<i class="fa fa-times"></i>{{end}} </td>
+                                <td>
+                                    {{if $isGrantedUpdate}}
+                                    <a href="/admin/role/update/{{.ID}}" class="btn btn-primary btn-xs">编辑</a>
+                                    {{end}}
+                                    {{if $isGrantedDelete}}
+                                    <a href="javascript:" data-id="{{.ID}}" class="btn btn-danger btn-xs delete">删除</a>
+                                    {{end}}
+                                    {{if $isGrantedViewPrivilege}}
+                                    <a href="/admin/role/privileges/{{.ID}}" class="btn btn-success btn-xs">查看权限</a>
+                                    {{end}}
+                                </td>
+                            </tr>
+                            {{end}}
+
+                            </tbody>
+                        </table>
+                        <div id="pagination"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{end}}
+
+{{define "footer"}}
+    <script type="text/javascript" src="/resource/vendors/twbs-pagination/jquery.twbsPagination.js"></script>
+    {{block "modal_delete" .}} {{end}}
+    <script type="text/javascript">
+    $(function () {
+        //取消警告
+        $('.delete').click(function(){
+            $('#deleteID').val($(this).attr("data-id"));
+            $("#deleteModal").modal();
+        })
+
+        $("body").on("click",".deleteConfirm",function () {
+            $.post("/admin/role/delete",{"id":$('#deleteID').val()},function(result){
+                if (result.code == 0){
+                    location.reload();
+                    return
+                }
+
+                new PNotify({
+                    title: "出错了",
+                    type: 'error',
+                    text: result.msg,
+                    nonblock: {
+                        nonblock: true
+                    },
+                    styling: 'bootstrap3',
+                    delay:'2500'
+                })
+            });
+        })
+
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: {{.totalPage}},
+            visiblePages: 10,
+            startPage:{{.qPage}},
+            first:"首页",
+            last:"尾页",
+            prev:"上一页",
+            next:"下一页",
+            hideOnlyOnePage:true,
+            onPageClick: function (event, page) {
+
+            }
+        }).on('page', function (event, page) {
+            var query = window.location.search.substring(1);
+            var pairs=query.split("&");
+
+            var urlParam = "";
+
+            for(var i=0;i<pairs.length;i++){
+                var kv = pairs[i].split("=");
+                if(kv[0] == "page") {
+                    continue;
+                }
+
+                urlParam += pairs[i]+"&"
+            }
+
+            var url = window.location.pathname + "?"+urlParam+"page="+page;
+            location.href = url
+
+            console.info(page + ' (from options)');
+        });
+    })
+    </script>
+{{end}}

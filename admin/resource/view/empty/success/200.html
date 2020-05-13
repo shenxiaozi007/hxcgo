@@ -1,0 +1,38 @@
+{{block "content" .}}
+<body class="nav-md">
+<div class="container body">
+    <div class="main_container">
+        <!-- page content -->
+        <div class="col-md-12">
+            <div class="col-middle">
+                <div class="text-center text-center">
+                    <h1 class="error-number">200</h1>
+                    <h2>恭喜！成功了</h2>
+                    <p>
+                        <span class="clock" style="font-size: 16px;color: red">3</span>
+                        秒后跳转或点击 <a style="color: red" href="{{.redirectURL}}">立刻跳转</a> 返回到指定页面
+                    </p>
+
+                </div>
+            </div>
+        </div>
+        <!-- /page content -->
+    </div>
+</div>
+{{end}}
+
+{{block "footer" .}}
+
+    <script type="text/javascript">
+        function tick() {
+            var seconds = $('.clock').html()
+            if (seconds < 1) {
+                location.href = "{{.redirectURL}}"
+                return
+            }
+
+            $('.clock').html(seconds-1)
+        }
+        setInterval('tick()',1000)
+    </script>
+{{end}}

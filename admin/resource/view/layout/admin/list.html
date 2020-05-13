@@ -1,0 +1,260 @@
+{{define "content"}}
+    <style>
+        .select2-container--default .select2-results__option[aria-selected=true] {
+            display: none;
+        }
+    </style>
+<div class="right_col" role="main">
+    <div class="page-title">
+        <div class="title_left">
+            <h3>管理员列表</h3>
+        </div>
+
+        {{if (isGranted .session "/admin/account/add")}}
+        <div class="title_right">
+            <a href="/admin/account/add" class="btn btn-primary" type="button">添加管理员</a>
+        </div>
+        {{end}}
+    </div>
+    <div class="clearfix"></div>
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label for="exampleInputName2">账号</label>
+                            <input type="text" class="form-control" name="account" value="{{.qAccount}}" placeholder="用户名、邮箱或手机号">
+                        </div>
+                        <div class="form-group">
+                            <label>分组</label>
+                            <select name="group_id" class="form-control">
+                                <option value="0">请选择</option>
+                                {{range .groups}}
+                                <option value="{{.ID}}" {{if eq .ID $.qGroupID}} selected {{end}}>{{.Name}}</option>
+                                {{end}}
+                            </select>
+
+                        </div>
+                        <div class="form-group">
+                            <label>状态</label>
+                            <select name="state" class="form-control">
+                                <option value="-1">请选择</option>
+                                <option value="0" {{if eq .qState 0}} selected {{end}}>启用</option>
+                                <option value="1" {{if eq .qState 1}} selected {{end}}>关闭</option>
+                            </select>
+
+                        </div>
+                        <button type="submit" class="btn btn-success">筛选</button>
+                        <a href="/admin/accounts" class="btn btn-warning">清除筛选</a>
+                    </form>
+                </div>
+                <div class="x_content">
+
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>用户名</th>
+                            <th>邮箱</th>
+                            <th>手机号</th>
+                            <th>状态</th>
+                            <th>所属分组</th>
+                            <th>创建时间</th>
+                            <th>最后登录时间</th>
+                            <th>最后登录IP</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{$isGrantedUpdate := isGranted .session "/admin/account/update"}}
+                        {{$isGrantedDelete := isGranted .session "/admin/account/delete"}}
+                        {{$isGrantedViewRole := isGranted .session "/admin/account/role_ids"}}
+
+                        {{range .admins}}
+                        <tr>
+                            <th scope="row">{{.ID}}</th>
+                            <td>{{.Name}}</td>
+                            <td>{{.Email}}</td>
+                            <td>{{.Mobile}}</td>
+                            <td>{{if eq .State 0 }}<i class="fa fa-check"></i>{{else}}<i class="fa fa-times"></i>{{end}}</td>
+                            <td>{{.GroupName}}</td>
+                            <td>{{.CreatedAt}}</td>
+                            <td>{{.LoginAt}}</td>
+                            <td>{{.LoginIP}}</td>
+                            <td>
+                                {{if $isGrantedUpdate}}
+                                <a href="/admin/account/update/{{.ID}}" class="btn btn-primary btn-xs">编辑</a>
+                                {{end}}
+                                {{if $isGrantedDelete}}
+                                <a href="javascript:" data-id="{{.ID}}" class="btn btn-danger btn-xs delete">删除</a>
+                                {{end}}
+                                {{if $isGrantedViewRole}}
+                                <a href="javascript:" data-id="{{.ID}}" class="btn btn-success btn-xs associate">查看角色</a>
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{end}}
+
+                        </tbody>
+                    </table>
+                    <div id="pagination"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    {{if $isGrantedViewRole}}
+<!--关联role-->
+<div class="modal fade" id="associateRole" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <!--<h4 class="modal-title">关联角色</h4>-->
+            </div>
+            <div class="modal-body">
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label class="control-label">请选择关联的角色</label>
+                            <select class="js-example-basic-multiple form-control" tabindex="-1" aria-hidden="true" multiple id="roleId" style="min-width: 200px;">
+                                {{range $id,$role := .roles}}
+                                    <option value="{{$id}}">{{$role.Name}}</option>
+                                {{end}}
+                            </select>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+        {{end}}
+{{end}}
+
+{{define "footer"}}
+<script type="text/javascript" src="/resource/vendors/twbs-pagination/jquery.twbsPagination.js"></script>
+{{block "modal_delete" .}} {{end}}
+<script type="text/javascript">
+    $(function () {
+        //取消警告
+        $('.delete').click(function(){
+            $('#deleteID').val($(this).attr("data-id"));
+            $("#deleteModal").modal();
+        });
+
+        $("body").on("click",".deleteConfirm",function () {
+            $.post("/admin/account/delete",{"id":$('#deleteID').val()},function(result){
+                if (result.code == 0){
+                    location.reload();
+                    return
+                }
+
+                new PNotify({
+                    title: "出错了",
+                    type: 'error',
+                    text: result.msg,
+                    nonblock: {
+                        nonblock: true
+                    },
+                    styling: 'bootstrap3',
+                    delay:'2500'
+                })
+            });
+        });
+
+        window.pagObj = $('#pagination').twbsPagination({
+            totalPages: {{.totalPage}},
+            visiblePages: 10,
+            startPage:{{.qPage}},
+            first:"首页",
+            last:"尾页",
+            prev:"上一页",
+            next:"下一页",
+            hideOnlyOnePage:true,
+            onPageClick: function (event, page) {
+
+            }
+        }).on('page', function (event, page) {
+            var query = window.location.search.substring(1);
+            var pairs=query.split("&");
+
+            var urlParam = "";
+
+            for(var i=0;i<pairs.length;i++){
+                var kv = pairs[i].split("=");
+                if(kv[0] == "page") {
+                    continue;
+                }
+
+                urlParam += pairs[i]+"&"
+            }
+
+            var url = window.location.pathname + "?"+urlParam+"page="+page;
+            location.href = url;
+        });
+
+        //=================== 角色关联 ===================//
+        var currAdminID = 0;
+
+        function loadAssociateRoles(privilegeID)
+        {
+            $.ajax({
+                type: "GET",
+                url: "/admin/account/role_ids?id="+currAdminID,
+                success: function(ret){
+                    var value = null;
+                    if(ret.code == 0 && ret.data ){
+                        value = ret.data
+                    }
+                    $("#roleId").select2({
+                        width:"100%",
+                    }).val(value).trigger('change');
+                }
+            });
+        }
+
+        $("body").on("click",".associate",function () {
+            currAdminID = $(this).attr("data-id");
+            loadAssociateRoles(currAdminID)
+
+            $("#associateRole").modal();
+        });
+
+
+        function associate(roleID)
+        {
+            {{if isGranted .session "/admin/account/associate_role"}}
+            $.ajax({
+                type: "POST",
+                url: "/admin/account/associate_role",
+                data:{'roleID':roleID,'id':currAdminID},
+                dataType:'json',
+                success: function(ret){
+                    if (ret.code == 0){
+                        return
+                    }
+
+                    new PNotify({
+                        title: "出错了",
+                        type: 'error',
+                        text: ret.msg,
+                        nonblock: {
+                            nonblock: true
+                        },
+                        styling: 'bootstrap3',
+                        delay:'2500'
+                    });
+                    loadAssociateRoles(currAdminID)
+                }
+            });
+            {{end}}
+        }
+
+        $('#roleId').on("select2:select",function (event) {associate(event.params.data.id)});
+        $('#roleId').on("select2:unselect",function (event) {associate(event.params.data.id)});
+    })
+</script>
+{{end}}
