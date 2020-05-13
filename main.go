@@ -1,14 +1,17 @@
-package hxcgo
+package main
 
 import (
-	"github.com/huangxinchun/hxcgo/admin/core/redis"
-	"log"
+	"github.com/huangxinchun/hxcgo/admin"
+	"github.com/spf13/cobra"
 )
 
 //test
 func main() {
-	err := redis.Connect(cfg.Redis)
-	if err != nil {
-		log.Fatalln("redis connect error: ", err)
-	}
+	var modelList = &cobra.Command{Use: "god"}
+
+	//后台服务
+	modelList.AddCommand(admin.AdminModel)
+
+	//执行命令
+	modelList.Execute()
 }

@@ -1,8 +1,9 @@
 package model
 
 import (
-	"github.com/huangxinchun/hxcgo/admin/core/db"
 	"time"
+
+	"github.com/huangxinchun/hxcgo/admin/core/db"
 )
 
 type Admin struct {

@@ -1,4 +1,4 @@
-package hxcgo
+package main
 
 import "fmt"
 

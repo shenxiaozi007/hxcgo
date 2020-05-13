@@ -9,8 +9,6 @@ import (
 var clients = map[string]*redis.Client{}
 
 func Connect(configs []*core.RedisConfig) error {
-	fmt.Println(3232)
-
 	var defaultClient *redis.Client
 
 	for _,cfg := range configs {
