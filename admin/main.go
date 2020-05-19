@@ -17,7 +17,9 @@ import (
 )
 
 func main() {
-	err := opt.ParseConfig("/home/vagrant/gocode/hxcgo/admin/conf/config.json")
+	// err := opt.ParseConfig("/home/vagrant/gocode/hxcgo/admin/conf/config.json")
+
+	err := opt.ViperConfig("/home/vagrant/gocode/hxcgo/admin/conf/")
 	if err != nil {
 		log.Fatalln("Parse Config err: ", err)
 	}
