@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/huangxinchun/hxcgo/admin/app"
@@ -10,6 +12,7 @@ import (
 	"github.com/huangxinchun/hxcgo/admin/core/cache"
 	"github.com/huangxinchun/hxcgo/admin/core/opt"
 	"github.com/huangxinchun/hxcgo/admin/core/redis"
+	"github.com/huangxinchun/hxcgo/admin/core/rootpath"
 	"github.com/huangxinchun/hxcgo/admin/core/rpc"
 
 	"github.com/gin-contrib/sessions"
@@ -18,8 +21,7 @@ import (
 
 func main() {
 	// err := opt.ParseConfig("/home/vagrant/gocode/hxcgo/admin/conf/config.json")
-
-	err := opt.ViperConfig("/home/vagrant/gocode/hxcgo/admin/conf/")
+	err := opt.ViperConfig(path.Join(rootpath.RootPath, "/conf"))
 	if err != nil {
 		log.Fatalln("Parse Config err: ", err)
 	}
@@ -31,7 +33,6 @@ func main() {
 	if err != nil {
 		log.Fatalln("redis error: ", err)
 	}
-
 	log.Println("debug: ")
 	log.Println(redis.Client().Set("test", "111", 10*time.Second).Result())
 
@@ -48,8 +49,9 @@ func main() {
 	engine.Use(sessions.Sessions("session", store))
 
 	app.InitRouter(engine)
-	engine.HTMLRender = core.LoadTemplates(cfg.TemplateDir, engine.FuncMap)
+	engine.HTMLRender = core.LoadTemplates(path.Join(rootpath.RootPath, cfg.TemplateDir), engine.FuncMap)
 	//engine.Static("/resource", cfg.ResourceDir)
-	engine.StaticFS("/resource", http.Dir(cfg.ResourceDir))
+	engine.StaticFS("/resource", http.Dir(path.Join(rootpath.RootPath, cfg.ResourceDir)))
+	fmt.Println(cfg.ServerAddr)
 	engine.Run(cfg.ServerAddr)
 }
