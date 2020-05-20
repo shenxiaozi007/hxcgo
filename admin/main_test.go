@@ -32,6 +32,7 @@ func Test_JWT(t *testing.T) {
 }
 
 func Test_DecodeJWT(t *testing.T) {
+
 	tokenStr := "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1NjcwODExNTIsImZha2VFeHBpcmVzQXQiOjE1NjY4MjE5NjcsInRva2VuIjoidGVzdCJ9.PxSollpoq8VzPUXzyajW71y7liSeu1uQ_yTRToZZn2c"
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

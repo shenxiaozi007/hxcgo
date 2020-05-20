@@ -54,4 +54,5 @@ func main() {
 	engine.StaticFS("/resource", http.Dir(path.Join(rootpath.RootPath, cfg.ResourceDir)))
 	fmt.Println(cfg.ServerAddr)
 	engine.Run(cfg.ServerAddr)
+
 }
