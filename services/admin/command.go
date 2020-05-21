@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"path"
 	"time"
 
 	"github.com/huangxinchun/hxcgo/services/admin/app"
@@ -11,6 +12,7 @@ import (
 	"github.com/huangxinchun/hxcgo/services/admin/core/db"
 	"github.com/huangxinchun/hxcgo/services/admin/core/opt"
 	"github.com/huangxinchun/hxcgo/services/admin/core/redis"
+	"github.com/huangxinchun/hxcgo/services/admin/core/rootpath"
 	"github.com/spf13/cobra"
 )
 
@@ -23,7 +25,7 @@ var AdminModel = &cobra.Command{
 		//获取当前目录
 		// pwd, _ := os.Getwd()
 
-		err := opt.ParseConfig("/home/vagrant/gocode/hxcgo/services/admin/conf/config.json")
+		err := opt.ViperConfig(path.Join(rootpath.RootPath, "/conf"))
 		if err != nil {
 			log.Fatalln("Parse Config err: ", err)
 		}
