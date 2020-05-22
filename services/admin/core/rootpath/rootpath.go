@@ -1,6 +1,7 @@
 package rootpath
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -10,7 +11,7 @@ var RootPath = getRootPath()
 //返回根目录
 func getRootPath() string {
 	var rootPath string
-
+	fmt.Println(os.LookupEnv("GOD_SEC_SERVICES"))
 	if rootPath, exist := os.LookupEnv("GOD_SEC_SERVICES"); exist {
 		return rootPath
 	}

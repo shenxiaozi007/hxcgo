@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
@@ -24,7 +25,7 @@ var AdminModel = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		//获取当前目录
 		// pwd, _ := os.Getwd()
-
+		fmt.Println(rootpath.RootPath)
 		err := opt.ViperConfig(path.Join(rootpath.RootPath, "/conf"))
 		if err != nil {
 			log.Fatalln("Parse Config err: ", err)
