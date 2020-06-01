@@ -49,7 +49,7 @@ func main() {
 	engine.Use(sessions.Sessions("session", store))
 
 	app.InitRouter(engine)
-	engine.HTMLRender = core.LoadTemplates(path.Join(rootpath.RootPath, cfg.TemplateDir), engine.FuncMap)
+	engine.HTMLRender = core.LoadTemplates(cfg.TemplateDir, engine.FuncMap)
 	//engine.Static("/resource", cfg.ResourceDir)
 	engine.StaticFS("/resource", http.Dir(path.Join(rootpath.RootPath, cfg.ResourceDir)))
 	fmt.Println(cfg.ServerAddr)
